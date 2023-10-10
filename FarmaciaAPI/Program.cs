@@ -1,5 +1,10 @@
 
 using FarmaciaAPI.Data;
+using FarmaciaAPI.Model;
+using FarmaciaAPI.Service.Implements;
+using FarmaciaAPI.Service;
+using FarmaciaAPI.Validator;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace FarmaciaAPI
@@ -21,12 +26,23 @@ namespace FarmaciaAPI
             options.UseSqlServer(connectionString)
             );
 
+            builder.Services.AddTransient<IValidator<Produto>, ProdutoValidator>();
+
+            builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+
+
+            using (var scope = app.Services.CreateAsyncScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                dbContext.Database.EnsureCreated();
+            }
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
