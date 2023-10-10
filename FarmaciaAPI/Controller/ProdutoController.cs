@@ -60,6 +60,11 @@ namespace FarmaciaAPI.Controller
             if (!validarProduto.IsValid)
                 return StatusCode(StatusCodes.Status400BadRequest, validarProduto);
 
+            var Resposta = await _produtoService.Create(produto);
+
+            if (Resposta is null)
+                return BadRequest("Categoria não encontrada!");
+
             return CreatedAtAction(nameof(GetById), new { id = produto.Id }, produto);
 
         }
@@ -68,17 +73,17 @@ namespace FarmaciaAPI.Controller
         public async Task<ActionResult> Update([FromBody] Produto produto)
         {
             if (produto.Id == 0)
-                return BadRequest("Id do game inválido!");
+                return BadRequest("Id dO Produto é inválido!");
 
             var validarProduto = await _produtoValidator.ValidateAsync(produto);
 
             if (!validarProduto.IsValid)
                 return StatusCode(StatusCodes.Status400BadRequest, validarProduto);
 
-            var Resposta = _produtoService.Update(produto);
+            var Resposta = await _produtoService.Update(produto);
 
             if (Resposta is null)
-                return NotFound("Game e/ou Categoria não encontrados!");
+                return NotFound("Produto e/ou Categoria não encontrados!");
 
             return Ok(Resposta);
         }
