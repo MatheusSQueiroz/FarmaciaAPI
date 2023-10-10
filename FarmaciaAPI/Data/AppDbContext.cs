@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FarmaciaAPI.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace FarmaciaAPI.Data
 {
@@ -9,5 +10,11 @@ namespace FarmaciaAPI.Data
 
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Produto>().ToTable("tb_produtos");
+        }
+
+        public DbSet<Produto> Produtos { get; set; } = null!;
     }
 }
